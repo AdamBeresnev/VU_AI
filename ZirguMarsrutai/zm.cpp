@@ -72,7 +72,7 @@ bool tinkamaPozicija(zirgoKoordinates);
 int main()
 {
     argumentuGavimas();
-    lenta.padarytEjima(1,1);
+    lenta.padarytEjima(1, 1);
     lenta.padarytEjima(1, 2);
     cout << lenta.gautiReiksme(1, 2);
 }
