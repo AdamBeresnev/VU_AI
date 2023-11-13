@@ -1,4 +1,6 @@
 #include <iostream>
+#include <fstream>
+#include <cstdio>
 
 using namespace std;
 
@@ -15,9 +17,11 @@ class lentosKlase {
     void inicializacija(){
         if (n == 0) { cout << "n negali buti lygus 0"; return; }
         int laikinaLenta[n*n];
+
         for(int i = 0; i < n*n; i++){
             laikinaLenta[i] = 0;
         }
+
         lentosMasyvas = laikinaLenta;
         inicializuota = true;
     }
@@ -53,6 +57,9 @@ class lentosKlase {
 lentosKlase lenta;
 struct zirgoKoordinates zirgas;
 
+ofstream outShort;
+ofstream outLong;
+
 zirgoKoordinates taisykle1() { struct zirgoKoordinates ateitiesPozicija; ateitiesPozicija.x = zirgas.x + 2; ateitiesPozicija.y = zirgas.y + 1; return ateitiesPozicija;};
 zirgoKoordinates taisykle2() { struct zirgoKoordinates ateitiesPozicija; ateitiesPozicija.x = zirgas.x + 1; ateitiesPozicija.y = zirgas.y + 2; return ateitiesPozicija;};
 zirgoKoordinates taisykle3() { struct zirgoKoordinates ateitiesPozicija; ateitiesPozicija.x = zirgas.x - 1; ateitiesPozicija.y = zirgas.y + 2; return ateitiesPozicija;};
@@ -63,6 +70,11 @@ zirgoKoordinates taisykle7() { struct zirgoKoordinates ateitiesPozicija; ateitie
 zirgoKoordinates taisykle8() { struct zirgoKoordinates ateitiesPozicija; ateitiesPozicija.x = zirgas.x + 2; ateitiesPozicija.y = zirgas.y - 1; return ateitiesPozicija;};
 
 void argumentuGavimas();
+void isvestis1();
+void isvestis2();
+void isvestis3();
+
+string formuoti(int, int);
 
 int taisykliuTikrinimas();
 int taisykliuTikrinimas(int);
@@ -72,14 +84,81 @@ bool tinkamaPozicija(zirgoKoordinates);
 int main()
 {
     argumentuGavimas();
-    lenta.padarytEjima(1, 1);
-    lenta.padarytEjima(1, 2);
-    cout << lenta.gautiReiksme(1, 2);
+    outLong.open("out-long.txt");
+    outShort.open("out-short.txt");
+    
+    for(int i = 1; i < lenta.n; i++){
+        for(int o = 1; o < lenta.n; o++){
+            cout << lenta.gautiReiksme(i, o) << " ";
+        }
+    }
+    cout << endl;
+
+    // for (int i = 1; i <= lenta.n; i++){
+    //     cout << lenta.gautiReiksme(1, i) << endl;
+    // }
+
+    //isvestis3();
+
+    outShort.close();
+    outLong.close();
 }
 
 void argumentuGavimas(){
     lenta.n = 5;
     zirgas = {1, 1};
+}
+
+void isvestis1(){
+
+}
+
+void isvestis2(){
+
+}
+
+void isvestis3(){
+    ofstream tempOut ("out-temp-3.txt");
+    tempOut << "PART 3. Results\n";
+    tempOut << "  2) Path graphically:\n\n";
+    tempOut << "  Y, V ^\n";
+
+    for (int i = lenta.n; i > 0; i--){
+        tempOut << "     ";
+        tempOut << i << " |";
+        
+        for (int o = 1; o <= lenta.n; o++){
+            tempOut << formuoti(lenta.gautiReiksme(i, o), 3);
+        }
+
+        tempOut << endl;
+    }
+
+    tempOut << "       ------------------> X, U\n";
+    tempOut << "        ";
+    for (int i = 1; i <= lenta.n; i++){
+        tempOut << formuoti(i, 3);
+    }
+
+    tempOut.close();
+    ifstream tempIn ("out-temp-3.txt");
+    string eilute;
+    while (getline(tempIn, eilute)){
+        cout << eilute << endl;
+        outShort << eilute << endl;
+        outLong << eilute << endl;
+    }
+    tempIn.close();
+    remove("out-temp-3.txt");
+}
+
+string formuoti(int skaicius, int ilgis){
+    string rezultatas = "";
+    for (int i = ilgis - to_string(skaicius).length(); i > 0; i--) {
+        rezultatas += ' ';
+    }
+    rezultatas += to_string(skaicius);
+    return rezultatas;
 }
 
 int taisykliuTikrinimas() { return taisykliuTikrinimas(1); }
@@ -145,6 +224,9 @@ bool tinkamaPozicija(zirgoKoordinates ateitiesPozicija){
     if (ateitiesPozicija.x < 1 || ateitiesPozicija.y < 1 || ateitiesPozicija.x > lenta.n || ateitiesPozicija.y > lenta.n){
         return false;
     }
-    //reikia patikrint ar neuzejo ant liestos vietos
+    if (lenta.gautiReiksme(ateitiesPozicija.x, ateitiesPozicija.y) != 0){
+        return false;
+    }
     return true;
 }
+
