@@ -86,6 +86,7 @@ int main()
     outShort.open("out-short.txt");
 
     isvestis1();
+    rekursyvusCiklas(zirgas);
     outLong << endl << endl;
     isvestis3();
 
@@ -99,9 +100,12 @@ void argumentuGavimas(){
 }
 
 void rekursyvusCiklas(zirgoKoordinates pozicija){
+    if (eilute == 25) { rastasMarsrutas = true; return; }
     for(int i = 1; i <= 8; i++){
+        if(rastasMarsrutas) { return; }
         tinkamaPozicija(pozicija, i);
     }
+    outLong >> " Backtrack.";
 }
 
 void isvestis1(){
