@@ -39,8 +39,7 @@ class lentosKlase {
 
     void padarytEjima(int x, int y){
         if (!inicializuota) { inicializacija(); }
-        lentosMasyvas[(x - 1) * n + (y - 1)] = ejimas;
-        ejimas++;
+        lentosMasyvas[(x - 1) * n + (y - 1)] = ejimas++;
     }
 
     void grizti(int naujasEjimas){
@@ -58,26 +57,29 @@ struct zirgoKoordinates zirgas;
 ofstream outShort;
 ofstream outLong;
 
-zirgoKoordinates taisykle1() { struct zirgoKoordinates ateitiesPozicija; ateitiesPozicija.x = zirgas.x + 2; ateitiesPozicija.y = zirgas.y + 1; return ateitiesPozicija;};
-zirgoKoordinates taisykle2() { struct zirgoKoordinates ateitiesPozicija; ateitiesPozicija.x = zirgas.x + 1; ateitiesPozicija.y = zirgas.y + 2; return ateitiesPozicija;};
-zirgoKoordinates taisykle3() { struct zirgoKoordinates ateitiesPozicija; ateitiesPozicija.x = zirgas.x - 1; ateitiesPozicija.y = zirgas.y + 2; return ateitiesPozicija;};
-zirgoKoordinates taisykle4() { struct zirgoKoordinates ateitiesPozicija; ateitiesPozicija.x = zirgas.x - 2; ateitiesPozicija.y = zirgas.y + 1; return ateitiesPozicija;};
-zirgoKoordinates taisykle5() { struct zirgoKoordinates ateitiesPozicija; ateitiesPozicija.x = zirgas.x - 2; ateitiesPozicija.y = zirgas.y - 1; return ateitiesPozicija;};
-zirgoKoordinates taisykle6() { struct zirgoKoordinates ateitiesPozicija; ateitiesPozicija.x = zirgas.x - 1; ateitiesPozicija.y = zirgas.y - 2; return ateitiesPozicija;};
-zirgoKoordinates taisykle7() { struct zirgoKoordinates ateitiesPozicija; ateitiesPozicija.x = zirgas.x + 1; ateitiesPozicija.y = zirgas.y - 2; return ateitiesPozicija;};
-zirgoKoordinates taisykle8() { struct zirgoKoordinates ateitiesPozicija; ateitiesPozicija.x = zirgas.x + 2; ateitiesPozicija.y = zirgas.y - 1; return ateitiesPozicija;};
+int eilutesSkaiciausIlgis = 8;
+int eilute = 1;
+
+zirgoKoordinates taisykles[8] = {{  2,  1, 1},
+                                 {  1,  2, 1},
+                                 { -1,  2, 1},
+                                 { -2,  1, 1},
+                                 { -2, -1, 1},
+                                 { -1, -2, 1},
+                                 {  1, -2, 1},
+                                 {  2, -1, 1}};
 
 void argumentuGavimas();
 void isvestis1();
-void isvestis2();
+void isvestis2(int, zirgoKoordinates, int);
 void isvestis3();
 
 string formuoti(int, int);
 
 int taisykliuTikrinimas();
-int taisykliuTikrinimas(int);
+//int taisykliuTikrinimas(int);
 
-int tinkamaPozicija(zirgoKoordinates);
+int tinkamaPozicija(zirgoKoordinates, zirgoKoordinates);
 
 int main()
 {
@@ -92,15 +94,15 @@ int main()
     outLong.close();
 }
 
-void pagrindinisCiklas(){
-    while(lenta.ejimas <= lenta.n * lenta.n){
-        
-    }
-}
-
 void argumentuGavimas(){
     lenta.n = 5;
     zirgas = {1, 1, 1};
+}
+
+void pagrindinisCiklas(){
+    while(zirgas.l < lenta.n * lenta.n){
+        
+    }
 }
 
 void isvestis1(){
@@ -117,8 +119,26 @@ void isvestis1(){
     outLong << "  2) Initial position: X=" << zirgas.x << ", Y=" << zirgas.y << ". L=" << zirgas.l << ".\n\n";
 }
 
-void isvestis2(){
+void isvestis2(int taisykle, zirgoKoordinates pozicija, int busena){
+    outLong << formuoti(eilute, eilutesSkaiciausIlgis) << ") ";
 
+    for (int i = 1; i < pozicija.l - 1; i++){
+        outLong << '-';
+    }
+
+    outLong << "R" << taisykle << ". U=" << pozicija.x << ", V=" << pozicija.y << ". L=" << pozicija.l << ". ";
+
+    switch (busena){
+        case 0: 
+            outLong << "Free. BOARD[" << pozicija.x << ',' << pozicija.y << "]:=" << pozicija.l << ".\n";
+            break;
+        case 1:
+            outLong << "Thread.\n";
+            break;
+        case 2:
+            outLong << "Out.\n";
+            break;
+    }
 }
 
 void isvestis3(){
@@ -168,70 +188,73 @@ string formuoti(int skaicius, int ilgis){
     return rezultatas;
 }
 
-int taisykliuTikrinimas() { return taisykliuTikrinimas(1); }
+// int taisykliuTikrinimas() { return taisykliuTikrinimas(1); }
 
-int taisykliuTikrinimas(int cikloPradzia){
-    for (int i = cikloPradzia; i <= 8; i++){
-        switch (i){
-            case 1:
-                if (!tinkamaPozicija(taisykle1())){
-                    zirgas = taisykle1();
-                    return 1;
-                } 
-                break;
-            case 2:
-                if (!tinkamaPozicija(taisykle2())){
-                    zirgas = taisykle2();
-                    return 2;
-                }
-                break;
-            case 3:
-                if (!tinkamaPozicija(taisykle3())){
-                    zirgas = taisykle3();
-                    return 3;
-                }
-                break;
-            case 4:
-                if (!tinkamaPozicija(taisykle4())){
-                    zirgas = taisykle4();
-                    return 4;
-                }
-                break;
-            case 5:
-                if (!tinkamaPozicija(taisykle5())){
-                    zirgas = taisykle5();
-                    return 5;
-                }
-                break;
-            case 6:
-                if (!tinkamaPozicija(taisykle6())){
-                    zirgas = taisykle6();
-                    return 6;
-                }
-                break;
-            case 7:
-                if (!tinkamaPozicija(taisykle7())){
-                    zirgas = taisykle7();
-                    return 7;
-                }
-                break;
-            case 8:
-                if (!tinkamaPozicija(taisykle8())){
-                    zirgas = taisykle8();
-                    return 8;
-                }
-                break;
-        }
-    }
+// int taisykliuTikrinimas(int cikloPradzia){
+//     for (int i = cikloPradzia; i <= 8; i++){
+//         switch (i){
+//             case 1:
+//                 if (!tinkamaPozicija(taisykle1())){
+//                     zirgas = taisykle1();
+//                     return 1;
+//                 } 
+//                 break;
+//             case 2:
+//                 if (!tinkamaPozicija(taisykle2())){
+//                     zirgas = taisykle2();
+//                     return 2;
+//                 }
+//                 break;
+//             case 3:
+//                 if (!tinkamaPozicija(taisykle3())){
+//                     zirgas = taisykle3();
+//                     return 3;
+//                 }
+//                 break;
+//             case 4:
+//                 if (!tinkamaPozicija(taisykle4())){
+//                     zirgas = taisykle4();
+//                     return 4;
+//                 }
+//                 break;
+//             case 5:
+//                 if (!tinkamaPozicija(taisykle5())){
+//                     zirgas = taisykle5();
+//                     return 5;
+//                 }
+//                 break;
+//             case 6:
+//                 if (!tinkamaPozicija(taisykle6())){
+//                     zirgas = taisykle6();
+//                     return 6;
+//                 }
+//                 break;
+//             case 7:
+//                 if (!tinkamaPozicija(taisykle7())){
+//                     zirgas = taisykle7();
+//                     return 7;
+//                 }
+//                 break;
+//             case 8:
+//                 if (!tinkamaPozicija(taisykle8())){
+//                     zirgas = taisykle8();
+//                     return 8;
+//                 }
+//                 break;
+//         }
+//     }
 
-    return 0;
-}
+//     return 0;
+// }
 
-int tinkamaPozicija(zirgoKoordinates ateitiesPozicija){
-    if (ateitiesPozicija.x < 1 || ateitiesPozicija.y < 1 || ateitiesPozicija.x > lenta.n || ateitiesPozicija.y > lenta.n){
+int tinkamaPozicija(zirgoKoordinates pozicija, zirgoKoordinates taisykle){
+    pozicija.x += taisykle.x;
+    pozicija.y += taisykle.y;
+    pozicija.l += taisykle.l;
+    if (pozicija.x < 1 || pozicija.y < 1 || pozicija.x > lenta.n || pozicija.y > lenta.n){
         return 2;   //2 reiskia kad pozicija uz lentos ribu
     }
-    if (lenta.gautiReiksme(ateitiesPozicija.x, ateitiesPozicija.y) != 0){
+    if (lenta.gautiReiksme(pozicija.x, pozicija.y) != 0){
         return 1;   //1 reiskia kad pozicija jau buvo pasiekta
     }
     return 0;   //0 reiskia kad pozicija tinkama
