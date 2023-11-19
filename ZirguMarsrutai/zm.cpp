@@ -1,28 +1,26 @@
 #include <iostream>
 #include <fstream>
 #include <cstdio>
+#include <vector>
 
 using namespace std;
 
 struct zirgoKoordinates {
     int x;
     int y;
+    int l;
 };
 
 class lentosKlase {
     private:
     bool inicializuota;
-    int* lentosMasyvas;
+    vector<int> lentosMasyvas;
 
     void inicializacija(){
         if (n == 0) { cout << "n negali buti lygus 0"; return; }
-        int laikinaLenta[n*n];
+        
+        lentosMasyvas.resize(n * n);
 
-        for(int i = 0; i < n*n; i++){
-            laikinaLenta[i] = 0;
-        }
-
-        lentosMasyvas = laikinaLenta;
         inicializuota = true;
     }
     public:
@@ -79,38 +77,44 @@ string formuoti(int, int);
 int taisykliuTikrinimas();
 int taisykliuTikrinimas(int);
 
-bool tinkamaPozicija(zirgoKoordinates);
+int tinkamaPozicija(zirgoKoordinates);
 
 int main()
 {
     argumentuGavimas();
     outLong.open("out-long.txt");
     outShort.open("out-short.txt");
-    
-    for(int i = 1; i < lenta.n; i++){
-        for(int o = 1; o < lenta.n; o++){
-            cout << lenta.gautiReiksme(i, o) << " ";
-        }
-    }
-    cout << endl;
 
-    // for (int i = 1; i <= lenta.n; i++){
-    //     cout << lenta.gautiReiksme(1, i) << endl;
-    // }
-
-    //isvestis3();
+    isvestis1();
+    isvestis3();
 
     outShort.close();
     outLong.close();
 }
 
+void pagrindinisCiklas(){
+    while(lenta.ejimas <= lenta.n * lenta.n){
+        
+    }
+}
+
 void argumentuGavimas(){
     lenta.n = 5;
-    zirgas = {1, 1};
+    zirgas = {1, 1, 1};
 }
 
 void isvestis1(){
+    cout << "PART 1. Data\n";
+    cout << "  1) Board: " << lenta.n << "x" << lenta.n << ".\n";
+    cout << "  2) Initial position: X=" << zirgas.x << ", Y=" << zirgas.y << ". L=" << zirgas.l << ".\n\n";
 
+    outShort << "PART 1. Data\n";
+    outShort << "  1) Board: " << lenta.n << "x" << lenta.n << ".\n";
+    outShort << "  2) Initial position: X=" << zirgas.x << ", Y=" << zirgas.y << ". L=" << zirgas.l << ".\n\n";
+
+    outLong << "PART 1. Data\n";
+    outLong << "  1) Board: " << lenta.n << "x" << lenta.n << ".\n";
+    outLong << "  2) Initial position: X=" << zirgas.x << ", Y=" << zirgas.y << ". L=" << zirgas.l << ".\n\n";
 }
 
 void isvestis2(){
@@ -120,6 +124,9 @@ void isvestis2(){
 void isvestis3(){
     ofstream tempOut ("out-temp-3.txt");
     tempOut << "PART 3. Results\n";
+
+    //result
+
     tempOut << "  2) Path graphically:\n\n";
     tempOut << "  Y, V ^\n";
 
@@ -167,49 +174,49 @@ int taisykliuTikrinimas(int cikloPradzia){
     for (int i = cikloPradzia; i <= 8; i++){
         switch (i){
             case 1:
-                if (tinkamaPozicija(taisykle1())){
+                if (!tinkamaPozicija(taisykle1())){
                     zirgas = taisykle1();
                     return 1;
-                }
+                } 
                 break;
             case 2:
-                if (tinkamaPozicija(taisykle2())){
+                if (!tinkamaPozicija(taisykle2())){
                     zirgas = taisykle2();
                     return 2;
                 }
                 break;
             case 3:
-                if (tinkamaPozicija(taisykle3())){
+                if (!tinkamaPozicija(taisykle3())){
                     zirgas = taisykle3();
                     return 3;
                 }
                 break;
             case 4:
-                if (tinkamaPozicija(taisykle4())){
+                if (!tinkamaPozicija(taisykle4())){
                     zirgas = taisykle4();
                     return 4;
                 }
                 break;
             case 5:
-                if (tinkamaPozicija(taisykle5())){
+                if (!tinkamaPozicija(taisykle5())){
                     zirgas = taisykle5();
                     return 5;
                 }
                 break;
             case 6:
-                if (tinkamaPozicija(taisykle6())){
+                if (!tinkamaPozicija(taisykle6())){
                     zirgas = taisykle6();
                     return 6;
                 }
                 break;
             case 7:
-                if (tinkamaPozicija(taisykle7())){
+                if (!tinkamaPozicija(taisykle7())){
                     zirgas = taisykle7();
                     return 7;
                 }
                 break;
             case 8:
-                if (tinkamaPozicija(taisykle8())){
+                if (!tinkamaPozicija(taisykle8())){
                     zirgas = taisykle8();
                     return 8;
                 }
@@ -220,13 +227,13 @@ int taisykliuTikrinimas(int cikloPradzia){
     return 0;
 }
 
-bool tinkamaPozicija(zirgoKoordinates ateitiesPozicija){
+int tinkamaPozicija(zirgoKoordinates ateitiesPozicija){
     if (ateitiesPozicija.x < 1 || ateitiesPozicija.y < 1 || ateitiesPozicija.x > lenta.n || ateitiesPozicija.y > lenta.n){
-        return false;
+        return 2;   //2 reiskia kad pozicija uz lentos ribu
     }
     if (lenta.gautiReiksme(ateitiesPozicija.x, ateitiesPozicija.y) != 0){
-        return false;
+        return 1;   //1 reiskia kad pozicija jau buvo pasiekta
     }
-    return true;
+    return 0;   //0 reiskia kad pozicija tinkama
 }
 
