@@ -71,6 +71,9 @@ zirgoKoordinates taisykles[8] = {{  2,  1, 1},
                                  {  2, -1, 1}};
 
 void argumentuGavimas();
+
+void rekursyvusCiklas(zirgoKoordinates);
+
 void isvestis1();
 void isvestis2(int, zirgoKoordinates, int);
 void isvestis3();
