@@ -108,7 +108,7 @@ void rekursyvusCiklas(zirgoKoordinates pozicija){
         if(rastasMarsrutas) { return; }
         tinkamaPozicija(pozicija, i);
     }
-    outLong >> " Backtrack.";
+    outLong << " Backtrack.";
 }
 
 void isvestis1(){
