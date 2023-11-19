@@ -59,6 +59,7 @@ ofstream outLong;
 
 int eilutesSkaiciausIlgis = 8;
 int eilute = 1;
+bool rastasMarsrutas = false;
 
 zirgoKoordinates taisykles[8] = {{  2,  1, 1},
                                  {  1,  2, 1},
@@ -76,10 +77,7 @@ void isvestis3();
 
 string formuoti(int, int);
 
-int taisykliuTikrinimas();
-//int taisykliuTikrinimas(int);
-
-int tinkamaPozicija(zirgoKoordinates, zirgoKoordinates);
+void tinkamaPozicija(zirgoKoordinates, int);
 
 int main()
 {
@@ -88,6 +86,7 @@ int main()
     outShort.open("out-short.txt");
 
     isvestis1();
+    outLong << endl << endl;
     isvestis3();
 
     outShort.close();
@@ -99,9 +98,9 @@ void argumentuGavimas(){
     zirgas = {1, 1, 1};
 }
 
-void pagrindinisCiklas(){
-    while(zirgas.l < lenta.n * lenta.n){
-        
+void rekursyvusCiklas(zirgoKoordinates pozicija){
+    for(int i = 1; i <= 8; i++){
+        tinkamaPozicija(pozicija, i);
     }
 }
 
@@ -120,7 +119,8 @@ void isvestis1(){
 }
 
 void isvestis2(int taisykle, zirgoKoordinates pozicija, int busena){
-    outLong << formuoti(eilute, eilutesSkaiciausIlgis) << ") ";
+    if (eilute == 1) { outLong << "PART 2. Trace"; }
+    outLong << endl << formuoti(eilute++, eilutesSkaiciausIlgis) << ") ";
 
     for (int i = 1; i < pozicija.l - 1; i++){
         outLong << '-';
@@ -130,13 +130,13 @@ void isvestis2(int taisykle, zirgoKoordinates pozicija, int busena){
 
     switch (busena){
         case 0: 
-            outLong << "Free. BOARD[" << pozicija.x << ',' << pozicija.y << "]:=" << pozicija.l << ".\n";
+            outLong << "Free. BOARD[" << pozicija.x << ',' << pozicija.y << "]:=" << pozicija.l << ".";
             break;
         case 1:
-            outLong << "Thread.\n";
+            outLong << "Thread.";
             break;
         case 2:
-            outLong << "Out.\n";
+            outLong << "Out.";
             break;
     }
 }
@@ -144,8 +144,7 @@ void isvestis2(int taisykle, zirgoKoordinates pozicija, int busena){
 void isvestis3(){
     ofstream tempOut ("out-temp-3.txt");
     tempOut << "PART 3. Results\n";
-
-    //result
+    tempOut << "  2) Path is " << (rastasMarsrutas ? "" : "not ") << "found. Trials= " << eilute << ".\n";
 
     tempOut << "  2) Path graphically:\n\n";
     tempOut << "  Y, V ^\n";
@@ -188,75 +187,18 @@ string formuoti(int skaicius, int ilgis){
     return rezultatas;
 }
 
-// int taisykliuTikrinimas() { return taisykliuTikrinimas(1); }
-
-// int taisykliuTikrinimas(int cikloPradzia){
-//     for (int i = cikloPradzia; i <= 8; i++){
-//         switch (i){
-//             case 1:
-//                 if (!tinkamaPozicija(taisykle1())){
-//                     zirgas = taisykle1();
-//                     return 1;
-//                 } 
-//                 break;
-//             case 2:
-//                 if (!tinkamaPozicija(taisykle2())){
-//                     zirgas = taisykle2();
-//                     return 2;
-//                 }
-//                 break;
-//             case 3:
-//                 if (!tinkamaPozicija(taisykle3())){
-//                     zirgas = taisykle3();
-//                     return 3;
-//                 }
-//                 break;
-//             case 4:
-//                 if (!tinkamaPozicija(taisykle4())){
-//                     zirgas = taisykle4();
-//                     return 4;
-//                 }
-//                 break;
-//             case 5:
-//                 if (!tinkamaPozicija(taisykle5())){
-//                     zirgas = taisykle5();
-//                     return 5;
-//                 }
-//                 break;
-//             case 6:
-//                 if (!tinkamaPozicija(taisykle6())){
-//                     zirgas = taisykle6();
-//                     return 6;
-//                 }
-//                 break;
-//             case 7:
-//                 if (!tinkamaPozicija(taisykle7())){
-//                     zirgas = taisykle7();
-//                     return 7;
-//                 }
-//                 break;
-//             case 8:
-//                 if (!tinkamaPozicija(taisykle8())){
-//                     zirgas = taisykle8();
-//                     return 8;
-//                 }
-//                 break;
-//         }
-//     }
-
-//     return 0;
-// }
-
-int tinkamaPozicija(zirgoKoordinates pozicija, zirgoKoordinates taisykle){
-    pozicija.x += taisykle.x;
-    pozicija.y += taisykle.y;
-    pozicija.l += taisykle.l;
+void tinkamaPozicija(zirgoKoordinates pozicija, int taisykle){
+    pozicija.x += taisykles[taisykle].x;
+    pozicija.y += taisykles[taisykle].y;
+    pozicija.l += taisykles[taisykle].l;
     if (pozicija.x < 1 || pozicija.y < 1 || pozicija.x > lenta.n || pozicija.y > lenta.n){
-        return 2;   //2 reiskia kad pozicija uz lentos ribu
+        isvestis2(taisykle, pozicija, 2); //2 reiskia kad pozicija uz lentos ribu
+        return;
     }
     if (lenta.gautiReiksme(pozicija.x, pozicija.y) != 0){
-        return 1;   //1 reiskia kad pozicija jau buvo pasiekta
+        isvestis2(taisykle, pozicija, 1); //1 reiskia kad pozicija jau buvo pasiekta
+        return;
     }
-    return 0;   //0 reiskia kad pozicija tinkama
+    isvestis2(taisykle, pozicija, 0); //0 reiskia kad pozicija tinkama
 }
 
