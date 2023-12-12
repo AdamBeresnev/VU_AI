@@ -42,9 +42,10 @@ class lentosKlase {
         lentosMasyvas[(x - 1) * n + (y - 1)] = ejimas++;
     }
 
-    void grizti(int naujasEjimas){
+    void grizti(){
+        ejimas -= 1;
         for(int i = 0; i < n*n; i++){
-            if (lentosMasyvas[i] >= naujasEjimas) {
+            if (lentosMasyvas[i] >= ejimas) {
                 lentosMasyvas[i] = 0;
             }
         }
@@ -85,6 +86,7 @@ void tinkamaPozicija(zirgoKoordinates, int);
 int main()
 {
     argumentuGavimas();
+    lenta.padarytEjima(zirgas.x, zirgas.y);
     outLong.open("out-long.txt");
     outShort.open("out-short.txt");
 
@@ -98,17 +100,25 @@ int main()
 }
 
 void argumentuGavimas(){
-    lenta.n = 5;
+    cout << "N=";
+    cin >> lenta.n;
     zirgas = {1, 1, 1};
+    cout << "X=";
+    cin >> zirgas.x;
+    cout << "Y=";
+    cin >> zirgas.y;
 }
 
 void rekursyvusCiklas(zirgoKoordinates pozicija){
-    if (eilute == 25) { rastasMarsrutas = true; return; }
+    if (lenta.ejimas == lenta.n * lenta.n + 1) { rastasMarsrutas = true; return; }
     for(int i = 1; i <= 8; i++){
         if(rastasMarsrutas) { return; }
         tinkamaPozicija(pozicija, i);
     }
-    outLong << " Backtrack.";
+    if (!rastasMarsrutas){
+        lenta.grizti();
+        outLong << " Backtrack.";
+    }
 }
 
 void isvestis1(){
@@ -138,6 +148,8 @@ void isvestis2(int taisykle, zirgoKoordinates pozicija, int busena){
     switch (busena){
         case 0: 
             outLong << "Free. BOARD[" << pozicija.x << ',' << pozicija.y << "]:=" << pozicija.l << ".";
+            lenta.padarytEjima(pozicija.x, pozicija.y);
+            rekursyvusCiklas(pozicija);
             break;
         case 1:
             outLong << "Thread.";
@@ -151,7 +163,7 @@ void isvestis2(int taisykle, zirgoKoordinates pozicija, int busena){
 void isvestis3(){
     ofstream tempOut ("out-temp-3.txt");
     tempOut << "PART 3. Results\n";
-    tempOut << "  2) Path is " << (rastasMarsrutas ? "" : "not ") << "found. Trials= " << eilute << ".\n";
+    tempOut << "  1) Path is " << (rastasMarsrutas ? "" : "not ") << "found. Trials= " << eilute - 1 << ".\n";
 
     tempOut << "  2) Path graphically:\n\n";
     tempOut << "  Y, V ^\n";
@@ -161,7 +173,7 @@ void isvestis3(){
         tempOut << i << " |";
         
         for (int o = 1; o <= lenta.n; o++){
-            tempOut << formuoti(lenta.gautiReiksme(i, o), 3);
+            tempOut << formuoti(lenta.gautiReiksme(o, i), 3);
         }
 
         tempOut << endl;
@@ -195,9 +207,9 @@ string formuoti(int skaicius, int ilgis){
 }
 
 void tinkamaPozicija(zirgoKoordinates pozicija, int taisykle){
-    pozicija.x += taisykles[taisykle].x;
-    pozicija.y += taisykles[taisykle].y;
-    pozicija.l += taisykles[taisykle].l;
+    pozicija.x += taisykles[taisykle - 1].x;
+    pozicija.y += taisykles[taisykle - 1].y;
+    pozicija.l += taisykles[taisykle - 1].l;
     if (pozicija.x < 1 || pozicija.y < 1 || pozicija.x > lenta.n || pozicija.y > lenta.n){
         isvestis2(taisykle, pozicija, 2); //2 reiskia kad pozicija uz lentos ribu
         return;
